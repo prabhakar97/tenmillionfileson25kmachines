@@ -3,7 +3,7 @@ import java.net.http.HttpTimeoutException;
 /**
  * Interface representing the stub for a RemoteSum rpc call
  */
-public interface RemoteSum {
+public interface RemoteSumStub {
     /**
      * Gets sum of integers in a file from a machine
      * @param machineId An integer representing the machineId

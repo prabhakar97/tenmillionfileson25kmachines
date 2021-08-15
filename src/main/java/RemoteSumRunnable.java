@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 public class RemoteSumRunnable implements Runnable {
     private int fileId;
     private int machineId;
-    private RemoteSum remoteSumRpcCaller;
+    private RemoteSumStub remoteSumStubRpcCaller;
     private Semaphore semaphore;
     private Queue<Integer> failedQueue;
     private BlockingQueue<Long> resultQueue;
@@ -15,14 +15,14 @@ public class RemoteSumRunnable implements Runnable {
 
     public RemoteSumRunnable(int fileId,
                              int machineId,
-                             RemoteSum remoteSumRpcCaller,
+                             RemoteSumStub remoteSumStubRpcCaller,
                              Semaphore availableThreads,
                              Queue<Integer> failedQueue,
                              BlockingQueue<Long> resultQueue,
                              ConcurrentMap<Integer, Boolean> busyMachinesMap) {
         this.fileId = fileId;
         this.machineId = machineId;
-        this.remoteSumRpcCaller = remoteSumRpcCaller;
+        this.remoteSumStubRpcCaller = remoteSumStubRpcCaller;
         this.semaphore = availableThreads;
         this.failedQueue = failedQueue;
         this.resultQueue = resultQueue;
@@ -32,7 +32,7 @@ public class RemoteSumRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            long result = remoteSumRpcCaller.getSum(machineId, fileId);
+            long result = remoteSumStubRpcCaller.getSum(machineId, fileId);
             System.out.println("Got result " + result + " from machine " + machineId + " for file " + fileId);
             resultQueue.put(result);
         } catch (HttpTimeoutException | InterruptedException e) {

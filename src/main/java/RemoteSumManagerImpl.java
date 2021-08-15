@@ -3,14 +3,12 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class RemoteSumManagerImpl implements RemoteSumManager {
     private int numMachines;
     private int numFiles;
-    private RemoteSum remoteSumRpcCaller;
+    private RemoteSumStub remoteSumStubRpcCaller;
     private int degreeOfParallelism;
 
     private ConcurrentMap<Integer, Boolean> busyMachinesMap;
@@ -19,10 +17,10 @@ public class RemoteSumManagerImpl implements RemoteSumManager {
     private AtomicInteger currentFile = new AtomicInteger(0);
     private Semaphore availableThreads;
 
-    public RemoteSumManagerImpl(int numMachines, int numFiles, RemoteSum remoteSumRpcCaller, int degreeOfParallelism) {
+    public RemoteSumManagerImpl(int numMachines, int numFiles, RemoteSumStub remoteSumStubRpcCaller, int degreeOfParallelism) {
         this.numMachines = numMachines;
         this.numFiles = numFiles;
-        this.remoteSumRpcCaller = remoteSumRpcCaller;   // injected dependency
+        this.remoteSumStubRpcCaller = remoteSumStubRpcCaller;   // injected dependency
         this.busyMachinesMap = new ConcurrentHashMap<>();
         this.degreeOfParallelism = degreeOfParallelism;
         this.availableThreads = new Semaphore(degreeOfParallelism); // Used for limiting the number of concurrent threads
@@ -39,7 +37,7 @@ public class RemoteSumManagerImpl implements RemoteSumManager {
                 System.out.println("Got file " + fileId + " to process on machine " + machineId);
                 RemoteSumRunnable remoteSumThread = new RemoteSumRunnable(fileId,
                         machineId,
-                        remoteSumRpcCaller,
+                        remoteSumStubRpcCaller,
                         availableThreads,
                         failedJobQueue,
                         resultQueue,

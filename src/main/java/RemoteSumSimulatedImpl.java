@@ -1,7 +1,7 @@
 import java.net.http.HttpTimeoutException;
 import java.util.Random;
 
-public class RemoteSumDummyImpl implements RemoteSum {
+public class RemoteSumSimulatedImpl implements RemoteSumStub {
     private static Random r = new Random();
 
     private int maxDurationInMillis;
@@ -12,7 +12,7 @@ public class RemoteSumDummyImpl implements RemoteSum {
      * @param maxDurationInMillis Maximum duration in milliseconds that the network call may take
      * @param failureCoefficient 1 call out of every failureCoeffiecient will fail with a HttpTimeoutException
      */
-    public RemoteSumDummyImpl(int maxDurationInMillis, int failureCoefficient) {
+    public RemoteSumSimulatedImpl(int maxDurationInMillis, int failureCoefficient) {
         this.maxDurationInMillis = maxDurationInMillis;
         this.failureCoefficient = failureCoefficient;
     }
