@@ -53,22 +53,22 @@ public class RemoteSumManagerImpl implements RemoteSumManager {
             }
         });
         final AtomicLong finalResult = new AtomicLong();
-        Executors.newSingleThreadExecutor().submit(() -> {
-            try {
-                while (currentFile.get() < numFiles || !failedJobQueue.isEmpty()) {
-                    System.out.println("Blocking waiting for result to appear on resultQueue");
-                    long localResult = resultQueue.take();
-                    finalResult.addAndGet(localResult);
-                }
-            } catch (InterruptedException ie) {
-                System.err.println("Error occurred during result get");
-                System.exit(1);
+        try {
+            while (currentFile.get() < numFiles || !failedJobQueue.isEmpty()) {
+                System.out.println("Blocking waiting for result to appear on resultQueue");
+                long localResult = resultQueue.take();
+                finalResult.addAndGet(localResult);
             }
-        });
+        } catch (InterruptedException ie) {
+            System.err.println("Error occurred during result get");
+            System.exit(1);
+        }
         return finalResult.get();
     }
 
     private int getFreeMachine() {
+        // TODO Iterating through a map inside a lock!!! Nooooooooooooo!
+        // Other option is to keep a queue of available machines. But that would need a numMachines sized queue.
         for (int i = 0; i < numMachines; i++) {
             lock.lock();
             if (busyMachinesMap.get(i) == null) {
