@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.net.http.HttpTimeoutException;
 
 /**
@@ -11,5 +12,5 @@ public interface RemoteSumStub {
      * @return Returns the sum of all integers in teh file by sending the request to the machine
      * @throws HttpTimeoutException when the machine doesn't respond in reasonable amount of time.
      */
-    long getSum(int machineId, int fileId) throws HttpTimeoutException;
+    long getSum(int machineId, int fileId) throws HttpTimeoutException, FileNotFoundException;
 }

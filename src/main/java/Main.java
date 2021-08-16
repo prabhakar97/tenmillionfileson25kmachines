@@ -7,11 +7,11 @@ public class Main {
         int numFiles = 10000000;
         int degreeOfParallelism = 100;  // Number of concurrent threads that can run on client machine smoothly
         // Setup the machine behavior simulator
-        RemoteSumStub remoteSumStub = new RemoteSumSimulatedImpl(maxDurationInMillis, failureCoefficient);
+        RemoteSumStub remoteSumStub = new RemoteSumImpl(maxDurationInMillis, failureCoefficient, numFiles);
 
         // The actual sum calculation is distributed across machines and calculated in here
-        RemoteSumManager remoteSumManager = new RemoteSumManagerImpl(numMachines, numFiles, remoteSumStub, degreeOfParallelism);
-        long result = remoteSumManager.calculateSum();
+        DistributedRemoteSum distributedRemoteSum = new DistributedRemoteSumImpl(numMachines, numFiles, remoteSumStub, degreeOfParallelism);
+        long result = distributedRemoteSum.calculateSum();
         System.out.println("The final result is: " + result);
     }
 }
